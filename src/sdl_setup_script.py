@@ -41,7 +41,7 @@ def setup_project():
     shutil.copytree(sdl_include, os.path.join(PROJECT_DIR, "include"), dirs_exist_ok=True)
     shutil.copytree(sdl_lib, os.path.join(PROJECT_DIR, "lib"), dirs_exist_ok=True)
     shutil.copy(sdl_dll, PROJECT_DIR)
-
+# CPP code generation
     with open(os.path.join(PROJECT_DIR, "main.cpp"), "w") as f:
         f.write("""#include <SDL.h>
 #include <iostream>
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 """)
-
+# C code generation
     with open(os.path.join(PROJECT_DIR, "main.c"), "w") as f:
         f.write("""#include <SDL.h>
 #include <stdio.h>
