@@ -40,7 +40,6 @@ def setup_project():
     os.makedirs(PROJECT_DIR, exist_ok=True)
     shutil.copytree(sdl_include, os.path.join(PROJECT_DIR, "include"), dirs_exist_ok=True)
     shutil.copytree(sdl_lib, os.path.join(PROJECT_DIR, "lib"), dirs_exist_ok=True)
-
     shutil.copy(sdl_dll, PROJECT_DIR)
 
     with open(os.path.join(PROJECT_DIR, "main.cpp"), "w") as f:
@@ -52,16 +51,32 @@ int main(int argc, char* argv[]) {
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
         return 1;
     }
-    std::cout << "SDL Initialized!" << std::endl;
+    std::cout << "SDL Initialized in C++!" << std::endl;
     SDL_Quit();
     return 0;
 }
 """)
-    
+
+    with open(os.path.join(PROJECT_DIR, "main.c"), "w") as f:
+        f.write("""#include <SDL.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL could not initialize! SDL_Error: %s\\n", SDL_GetError());
+        return 1;
+    }
+    printf("SDL Initialized in C!\\n");
+    SDL_Quit();
+    return 0;
+}
+""")
+
     with open(os.path.join(PROJECT_DIR, "Makefile"), "w") as f:
         f.write("""all:
-	g++ -Iinclude/sdl2 -Llib -o main main.cpp -lmingw32 -lSDL2main -lSDL2""")
-    
+	gcc -Iinclude/sdl2 -Llib -o main_c main.c -lmingw32 -lSDL2main -lSDL2
+	g++ -Iinclude/sdl2 -Llib -o main_cpp main.cpp -lmingw32 -lSDL2main -lSDL2""")
+
     print("Project setup complete.")
 
 if __name__ == "__main__":
